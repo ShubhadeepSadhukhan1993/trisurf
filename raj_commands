@@ -1,0 +1,66 @@
+Commands:
+
+
+
+aclocal
+autoheader
+automake -ac   (automake -ac --add-misssing   #if readme file is not available)
+autoconf
+autoreconf -if
+libtoolize –force
+
+automake -ac
+./configure
+
+
+
+Then go to src folder and run:
+
+
+
+make
+sudo make install
+
+sudo ldconfig
+
+
+
+To run the codes:
+
+
+
+trisurf –force-from-tape #(first time) or (trisurf --reset-iteration-count)
+
+trisurf #(after that)
+
+
+
+
+
+
+
+To run on the cluster:
+
+
+
+Change files that contain git,wall warror time, etc, mainly in make files
+
+
+
+Then follow same process except:
+
+./configure --prefix=/home/rajkumar/rajusers
+
+
+
+then:
+
+
+
+(go inside src directory)
+
+
+
+make
+
+make install
