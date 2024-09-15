@@ -107,7 +107,7 @@ int main(){
 	struct dirent **list;
 	ts_double l1,l2,l3,hbar;
 	int count;
-	//ts_fprintf(stderr,"TRISURF-NG v. %s, compiled on: %s %s.\n", TS_VERSION, __DATE__, __TIME__);
+//	ts_fprintf(stderr,"TRISURF-NG v. %s, compiled on: %s %s.\n", TS_VERSION, __DATE__, __TIME__);
 
 	fprintf(stdout, "OuterLoop Volume Area lamdba1 lambda2 lambda3 Nbw/Nb hbar\n");
 

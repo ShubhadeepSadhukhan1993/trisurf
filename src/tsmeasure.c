@@ -57,7 +57,7 @@ int main(){
     	ts_char *number;
 	struct dirent **list;
 	int count;
-	//ts_fprintf(stdout,"TRISURF-NG v. %s, compiled on: %s %s.\n", TS_VERSION, __DATE__, __TIME__);
+//	ts_fprintf(stdout,"TRISURF-NG v. %s, compiled on: %s %s.\n", TS_VERSION, __DATE__, __TIME__);
 	count=scandir(".",&list,0,alphasort);
 	if(count<0){
 		fatal("Error, cannot open directory.",1);

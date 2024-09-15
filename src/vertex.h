@@ -33,5 +33,5 @@ ts_bool vtx_copy(ts_vertex *cvtx,ts_vertex *ovtx);
 ts_bool vtx_duplicate(ts_vertex *cvtx, ts_vertex *ovtx);
 ts_vertex **vtx_neigh_copy(ts_vertex_list *vlist,ts_vertex *ovtx);
 ts_vertex_list *vertex_list_copy(ts_vertex_list *ovlist);
-
+void free_vtx_cluster(ts_vesicle * vesicle);
 #endif

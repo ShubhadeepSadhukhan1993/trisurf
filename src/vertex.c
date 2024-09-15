@@ -164,6 +164,15 @@ ts_bool vtx_free(ts_vertex  *vtx){
     return TS_SUCCESS;
 }
 
+void free_vtx_cluster(ts_vesicle * vesicle){
+    int i;
+    for (i=0; i<vesicle->vlist->n; i++){
+        if (vesicle->vlist->vtx[i]->c!=0){
+            vesicle->vlist->vtx[i]->cluster=NULL;
+        }
+    }
+}
+
 ts_bool vtx_list_free(ts_vertex_list *vlist){
     int i;
     for(i=0;i<vlist->n;i++){

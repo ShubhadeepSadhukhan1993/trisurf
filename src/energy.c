@@ -12,6 +12,30 @@
 const gsl_rng_type * TT;
 gsl_rng * rr_noise;
 
+
+FILE *fforce;
+
+
+ts_double random_force(ts_vesicle *vesicle){
+	return gsl_ran_gaussian_tail (rr_noise, -vesicle->tape->F, vesicle->tape->F_noise_SD)+vesicle->tape->F;
+} 
+
+
+void vesicle_random_force(ts_vesicle *vesicle){
+	int i;
+	fforce = fopen("./random_force.d", "a");
+	for (i=0; i<vesicle->vlist->n; i++){
+		if (vesicle->vlist->vtx[i]->c!=0){ 
+			vesicle->vlist->vtx[i]->F_vtx=random_force(vesicle);
+			fprintf(fforce, "%1.7e\t", vesicle->vlist->vtx[i]->F_vtx);
+		}
+		else{
+			vesicle->vlist->vtx[i]->F_vtx=0;
+		}
+	}
+	fprintf(fforce,"\n");
+	fclose(fforce);	
+}
 // Shubhadeep //
 
 //gsl_rng_env_setup();
@@ -224,10 +248,41 @@ inline ts_bool attraction_bond_energy(ts_bond *bond, ts_double w){
 }
 
 
+
+
+ts_double wall_force(ts_vesicle *vesicle, ts_double x1, ts_double y1){
+	double r;
+	r=sin(vesicle->tape->wall_theta)*(x1-vesicle->tape->wallx)-cos(vesicle->tape->wall_theta)*(y1-vesicle->tape->wally);
+	if (r<0){
+		return 0;
+	}
+	else{
+		return r;
+	}
+}
+
+
+ts_double wall_force_energy(ts_vesicle *vesicle, ts_vertex *vtx, ts_vertex *vtx_old){
+	if (vesicle->tape->wall_spring<1e-15){
+		return 0;
+	}
+	double dist, wFx, wFy;
+	dist=wall_force(vesicle, vtx->x, vtx->y);
+	wFx=-vesicle->tape->wall_spring*dist*sin(vesicle->tape->wall_theta);
+	wFy=vesicle->tape->wall_spring*dist*cos(vesicle->tape->wall_theta);
+
+	return -wFx*(vtx->x-vtx_old->x)-wFy*(vtx->y-vtx_old->y);
+}
+
+
 ts_double direct_force_energy(ts_vesicle *vesicle, ts_vertex *vtx, ts_vertex *vtx_old){
 	if(fabs(vtx->c)<1e-15) return 0.0;
 
 	if(fabs(vesicle->tape->F)<1e-15) return 0.0;
+
+	ts_double proj, conc, cs=1.0;
+
+	//printf("v--->  %d\n", vtx->idx);
 
 	ts_double norml,ddp=0.0;
 	ts_uint i;
@@ -243,29 +298,90 @@ ts_double direct_force_energy(ts_vesicle *vesicle, ts_vertex *vtx, ts_vertex *vt
 	xnorm/=norml;
 	ynorm/=norml;
 	znorm/=norml;
-	/*calculate ddp, perpendicular displacement*/
-	ddp=xnorm*(vtx->x-vtx_old->x)+ynorm*(vtx->y-vtx_old->y)+znorm*(vtx->z-vtx_old->z);
-	/*calculate dE*/
 
 	// Shubhadeep //
 	ts_double F;
+	F=vtx->F_vtx;
 	
-	F=vesicle->tape->F;
-	// Shubhadeep noise//
-	if (vesicle->tape->F_noise_switch){
-		//printf("m\n");
-		F = gsl_ran_gaussian_tail (rr_noise, -vesicle->tape->F, vesicle->tape->F_noise_SD)+vesicle->tape->F;
+	/*Shubhadeep*/
+	// Inhibition force //
+	if(vesicle->tape->inhibition_switch){
+		//F=sqrt(vtx->Factx*vtx->Factx+vtx->Facty*vtx->Facty+vtx->Factz*vtx->Factz);
+		
+		ts_double cs, conc;
+		cs=vesicle->tape->cs;
+		double c0=vesicle->tape->conc0;
+		vtx->proj=vesicle->xnorm*(vtx->x-vesicle->cm[0])+vesicle->ynorm*(vtx->y-vesicle->cm[1])+vesicle->znorm*(vtx->z-vesicle->cm[2]);
+		conc=c0*vesicle->tape->beta*(vesicle->proj_max-vesicle->proj_min)*vesicle->vmag*exp(-vesicle->tape->beta*vesicle->vmag*(vtx->proj-vesicle->proj_min)/vesicle->tape->D)/(1-exp(-vesicle->tape->beta*vesicle->vmag*(vesicle->proj_max-vesicle->proj_min)/vesicle->tape->D))/vesicle->tape->D;
+		conc/=vesicle->volume;
+		F=vtx->F_vtx*cs/(conc+cs);
+		vtx->cx=conc;
+		
 	}
-	// shubhadeep noise //
+	
+
 	vtx->Factx=-F*xnorm;
 	vtx->Facty=-F*ynorm;
 	vtx->Factz=-F*znorm;
 	
-	return F*ddp;	
+	vtx->Fx=-xnorm;
+	vtx->Fy=-ynorm;
+	vtx->Fz=-znorm;
+
+	/*calculate ddp, perpendicular displacement*/
+	ddp=vtx->Factx*(vtx->x-vtx_old->x)+vtx->Facty*(vtx->y-vtx_old->y)+vtx->Factz*(vtx->z-vtx_old->z);
+	/*calculate dE*/
+	return -ddp;	
 	//Shubhadeep //	
 	
 }
 
+ts_double blow_force_energy(ts_vesicle *vesicle,  ts_vertex *vtx, ts_vertex *vtx_old){
+	if(fabs(vesicle->tape->Fblow)<1e-15) return 0.0;
+	int i;
+	ts_double xnorm=0.0,ynorm=0.0,znorm=0.0, norml;
+	/*find normal of the vertex as sum of all the normals of the triangles surrounding it. */
+	for(i=0;i<vtx->tristar_no;i++){
+		xnorm+=vtx->tristar[i]->xnorm;
+		ynorm+=vtx->tristar[i]->ynorm;
+		znorm+=vtx->tristar[i]->znorm;
+	}
+	/*normalize*/
+	norml=sqrt(xnorm*xnorm+ynorm*ynorm+znorm*znorm);
+	xnorm/=norml;
+	ynorm/=norml;
+	znorm/=norml;
+	double Fp, Ft; 
+
+	double n1, n2, n3, energy; //, Fshy, Fshz;
+	n1=0;
+	n2=0;
+	n3=0;
+
+	
+	cross_product(xnorm, ynorm, znorm, 1, 0, 0, &n1, &n2, &n3);
+	cross_product(n1, n2, n3, xnorm, ynorm, znorm, &vtx->Fbx, &vtx->Fby, &vtx->Fbz);
+
+	double sigma=100;
+	if (xnorm>0 && vtx->x<vesicle->xback+2){
+		Fp=vesicle->tape->Fblow*exp(-(vtx->y-vesicle->cm[1])*(vtx->y-vesicle->cm[1])/sigma-(vtx->z-vesicle->tape->z_adhesion)*(vtx->z-vesicle->tape->z_adhesion)/sigma)*xnorm;	
+		Ft=vesicle->tape->Fblow*exp(-(vtx->y-vesicle->cm[1])*(vtx->y-vesicle->cm[1])/sigma-(vtx->z-vesicle->tape->z_adhesion)*(vtx->z-vesicle->tape->z_adhesion)/sigma)*sqrt(1-xnorm*xnorm);
+	}
+	else{
+		Fp=0;
+		Ft=0;
+	}	
+	energy=-Ft*(vtx->Fbx*(vtx->x-vtx_old->x)+vtx->Fby*(vtx->y-vtx_old->y)+vtx->Fbz*(vtx->z-vtx_old->z));
+
+	vtx->Fbx=Fp*xnorm;
+	vtx->Fby=Fp*ynorm;
+	vtx->Fbz=Fp*znorm;
+
+	energy+=-(vtx->Fbx*(vtx->x-vtx_old->x)+vtx->Fby*(vtx->y-vtx_old->y)+vtx->Fbz*(vtx->z-vtx_old->z));
+	//double theta=acos(xnorm);
+	return  energy;
+
+}
 
 
 ts_double direct_force_energy_with_Fz_balance(ts_vesicle *vesicle, ts_vertex *vtx, ts_vertex *vtx_old){
@@ -346,7 +462,7 @@ void cross_product(double x1, double y1, double z1, double x2, double y2,  doubl
 /* Shubhadeep */
 /*################################################################ */
 ts_double shear_force_energy(ts_vesicle *vesicle, ts_vertex *vtx, ts_vertex *vtx_old){
-	if (vesicle->tape->a<1e-15 && vesicle->tape->b<1e-15) return 0;
+	//if (vesicle->tape->Fud<1e-15) return 0;
 	ts_double xnorm=0;
 	ts_double ynorm=0;
 	ts_double znorm=0;
@@ -382,28 +498,8 @@ ts_double shear_force_energy(ts_vesicle *vesicle, ts_vertex *vtx, ts_vertex *vtx
 	cross_product(xnorm, ynorm, znorm, nx, ny, 0, &n1, &n2, &n3);
 	cross_product(n1, n2, n3, xnorm, ynorm, znorm, &vtx->Fshx, &vtx->Fshy, &vtx->Fshz);
 	
-
-	ts_double Fs=0;
-	ts_double dist=0;
-
-	//printf("radius %1.7e %1.7e %1.7e\n",vesicle->tape->adhesion_radius, vesicle->adhesion_center, vesicle->tape->z_adhesion);
-
-	if (vesicle->tape->type_of_adhesion_model==1){ // step potential
-		Fs=vesicle->tape->a*(vtx->z-vesicle->tape->z_adhesion)+vesicle->tape->b;
-	}
-	else if (vesicle->tape->type_of_adhesion_model==3){ //Spherical 
-		dist=sqrt(pow(vtx->z-vesicle->adhesion_center,2)+pow(vtx->x,2)+pow(vtx->y,2));
-		Fs=vesicle->tape->a*(dist-vesicle->tape->adhesion_radius)+vesicle->tape->b;
-	}
-	else if (vesicle->tape->type_of_adhesion_model==4){ //cylindrical (along y-axis) surface with step potential 
-		dist=sqrt(pow(vtx->z-vesicle->adhesion_center,2)+pow(vtx->x,2));
-		Fs=vesicle->tape->a*(dist-vesicle->tape->adhesion_radius)+vesicle->tape->b;
-	}
-	else if (vesicle->tape->type_of_adhesion_model==5){ //cylindrical (along x-axis) surface with step potential 
-		dist=sqrt(pow(vtx->z-vesicle->adhesion_center,2)+pow(vtx->y,2));
-		Fs=vesicle->tape->a*(dist-vesicle->tape->adhesion_radius)+vesicle->tape->b;
-	}
-	
+	//printf("%1.4f \t %1.4f %1.4f \n",n1, n2, n3);
+	ts_double Fs=vesicle->tape->a*(vtx->z-vesicle->tape->z_adhesion)+vesicle->tape->b;
 	
 	vtx->Fshx=Fs*vtx->Fshx;
 	vtx->Fshy=Fs*vtx->Fshy;

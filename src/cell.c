@@ -52,11 +52,12 @@ inline ts_uint vertex_self_avoidance(ts_vesicle *vesicle, ts_vertex *vtx){
     ts_double shiftx=(ts_double) clist->ncmax[0]/2;
     ts_double shifty=(ts_double) clist->ncmax[1]/2;
     ts_double shiftz=(ts_double) clist->ncmax[2]/2;
-    ncx=(ts_uint)((vtx->x-vesicle->cm[0])*clist->dcell+shiftx);
-    ncy=(ts_uint)((vtx->y-vesicle->cm[1])*clist->dcell+shifty);
-    ncz=(ts_uint)((vtx->z-vesicle->cm[2])*clist->dcell+shiftz);
-   // printf("%d :: %f, cmz=%f\n", ncz, vtx->z, vesicle->cm[2]);
-
+    ncx=(ts_uint)((vtx->x-vesicle->clist->c_cm[0])*clist->dcell+shiftx);
+    ncy=(ts_uint)((vtx->y-vesicle->clist->c_cm[1])*clist->dcell+shifty);
+    ncz=(ts_uint)((vtx->z-vesicle->clist->c_cm[2])*clist->dcell+shiftz);
+    
+    
+    
     if(ncx >= clist->ncmax[0]-1 || ncx <= 2){
         fatal("Vesicle is positioned outside the cell covered area. Coordinate x is the problem.",1500);
     }
@@ -66,9 +67,34 @@ inline ts_uint vertex_self_avoidance(ts_vesicle *vesicle, ts_vertex *vtx){
     if(ncz >= clist->ncmax[2]-1 || ncz <= 2){
         fatal("Vesicle is positioned outside the cell covered area. Coordinate z is the problem.",1500);
     }
+    /*
+    //printf("%e %e %e\n", vesicle->cm[0], vesicle->cm[1], vesicle->cm[2]);
+    if(ncx >= clist->ncmax[0]-1 || ncx <= 2 || ncy >= clist->ncmax[1]-1 || ncy <= 2 || ncz >= clist->ncmax[2]-1 || ncz <= 2 ){
+        printf("%d %d %d %d\n", vtx->idx, ncx, ncy,ncz);
+        if (vesicle->tape->allow_xy_plane_movement==1){
+            printf("xy1 before cmx=%e, cmy=%e, cmz=%e\n", clist->c_cm[0], clist->c_cm[1], clist->c_cm[2]);
+            //compute_cm(vesicle);
+            vesicle->clist->c_cm[0]=vesicle->cm[0];
+            vesicle->clist->c_cm[1]=vesicle->cm[1];
+            vesicle->clist->c_cm[2]=vesicle->cm[2];
+            //printf("xy1 after cmx=%e, cmy=%e, cmz=%e\n", vesicle->clist->c_cm[0], vesicle->clist->c_cm[1], vesicle->clist->c_cm[2]);
+            printf("xy1 after cmx=%e, cmy=%e, cmz=%e\n", clist->c_cm[0], clist->c_cm[1], clist->c_cm[2]);
+        }
+        else{
+            printf("xy0 before cmx=%e, cmy=%e, cmz=%e\n", clist->c_cm[0], clist->c_cm[1], clist->c_cm[2]);
+            centermass(vesicle);
+            printf("xy0 after cmx=%e, cmy=%e, cmz=%e\n", clist->c_cm[0], clist->c_cm[1], clist->c_cm[2]);
+        }
+        cell_occupation(vesicle);
+        ncx=(ts_uint)((vtx->x-vesicle->clist->c_cm[0])*clist->dcell+shiftx);
+        ncy=(ts_uint)((vtx->y-vesicle->clist->c_cm[1])*clist->dcell+shifty);
+        ncz=(ts_uint)((vtx->z-vesicle->clist->c_cm[2])*clist->dcell+shiftz);
+
+    }
+    */
     cellidx=ncz+(ncy-1)*clist->ncmax[2] + (ncx-1)*clist->ncmax[2]* 
                                     clist->ncmax[1] - 1; // -1 is because of 0 based indexing
-        return cellidx;
+    return cellidx;
 }
 
 

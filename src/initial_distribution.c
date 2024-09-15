@@ -36,7 +36,59 @@ ts_vesicle *initial_distribution_dipyramid(ts_uint nshell, ts_uint ncmax1, ts_ui
 	return vesicle;
 } 
 
+void init_direct_force(ts_vesicle *vesicle){
+	int i;
+	for (i=0; i<vesicle->vlist->n; i++){
+		init_direct_vtx_force(vesicle, vesicle->vlist->vtx[i]);
+	}
+}
 
+void init_direct_vtx_force(ts_vesicle *vesicle, ts_vertex *vtx){
+	if(fabs(vtx->c)<1e-15 || fabs(vesicle->tape->F)<1e-15){
+		vtx->Factx=0;
+		vtx->Facty=0;
+		vtx->Factz=0;
+		
+		vtx->Fx=0;
+		vtx->Fy=0;
+		vtx->Fz=0;
+	}
+
+	else{
+		ts_double norml,ddp=0.0;
+		ts_uint i;
+		ts_double xnorm=0.0,ynorm=0.0,znorm=0.0;
+		/*find normal of the vertex as sum of all the normals of the triangles surrounding it. */
+		for(i=0;i<vtx->tristar_no;i++){
+			xnorm+=vtx->tristar[i]->xnorm;
+			ynorm+=vtx->tristar[i]->ynorm;
+			znorm+=vtx->tristar[i]->znorm;
+		}
+		/*normalize*/
+		norml=sqrt(xnorm*xnorm+ynorm*ynorm+znorm*znorm);
+		xnorm/=norml;
+		ynorm/=norml;
+		znorm/=norml;
+
+		// Shubhadeep //
+		
+		if (vesicle->tape->F_noise_switch){
+			vtx->F_vtx=random_force(vesicle);
+		}
+		else{
+			vtx->F_vtx=vesicle->tape->F;
+		}
+		ts_double F;
+		F=vtx->F_vtx;
+		vtx->Factx=-F*xnorm;
+		vtx->Facty=-F*ynorm;
+		vtx->Factz=-F*znorm;
+	
+		vtx->Fx=-xnorm;
+		vtx->Fy=-ynorm;
+		vtx->Fz=-znorm;
+	}
+}
 
 ts_vesicle *create_vesicle_from_tape(ts_tape *tape){
 	ts_vesicle *vesicle;
@@ -46,6 +98,7 @@ ts_vesicle *create_vesicle_from_tape(ts_tape *tape){
 	vesicle->poly_list=init_poly_list(tape->npoly,tape->nmono, vesicle->vlist, vesicle);
 	set_vesicle_values_from_tape(vesicle);
 	initial_population_with_c0(vesicle,tape);
+	init_direct_force(vesicle);
 	return vesicle;
 }
 

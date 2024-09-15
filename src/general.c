@@ -146,5 +146,5 @@ lockRegion(int fd, int type, int whence, int start, int len)
 
 
 char *libVersion(){
-	//return TS_VERSION;
+	return 0;//TS_VERSION;
 }

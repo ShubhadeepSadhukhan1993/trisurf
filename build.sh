@@ -5,10 +5,10 @@ aclocal
 autoheader
 automake -ac
 autoconf
-./configure
+./configure --prefix=/home/shubsad/shubsad_user
 make clean
-make
-sudo make install
+make -j8
+make install -j8
 echo "Warning!"
 echo "Python scripts for running the trisurf-ng have been moved to separate package"
 

@@ -5,7 +5,24 @@
 #include "frame.h"
 #include "triangle.h"
 
-ts_bool centermass(ts_vesicle *vesicle){
+
+
+void compute_cm(ts_vesicle *vesicle){
+	vesicle->cm[0]=0;
+	vesicle->cm[1]=0;
+	vesicle->cm[2]=0;
+	int i;
+	for (i=0; i<vesicle->vlist->n; i++){
+		vesicle->cm[0]+=vesicle->vlist->vtx[i]->x;
+		vesicle->cm[1]+=vesicle->vlist->vtx[i]->y;
+		vesicle->cm[2]+=vesicle->vlist->vtx[i]->z;
+	}
+	vesicle->cm[0]/=vesicle->vlist->n;
+	vesicle->cm[1]/=vesicle->vlist->n;
+	vesicle->cm[2]/=vesicle->vlist->n;
+}
+
+ts_bool centermass(ts_vesicle *vesicle, int ti, FILE *pFile2){
     ts_uint i,j, n=vesicle->vlist->n;
     ts_vertex **vtx=vesicle->vlist->vtx;
 	ts_double temp_z_cm=0;
@@ -20,6 +37,9 @@ ts_bool centermass(ts_vesicle *vesicle){
     vesicle->cm[0]/=(ts_float)n;
     vesicle->cm[1]/=(ts_float)n;
     vesicle->cm[2]/=(ts_float)n;
+
+    fprintf(pFile2, "%d\t%e\t%e\t%e\n", ti, vesicle->cm[0], vesicle->cm[1], vesicle->cm[2]);
+    fflush(pFile2);
 
 	//center mass for z component does not  change if we confine the vesicle with plates
 	if(vesicle->tape->plane_confinement_switch){

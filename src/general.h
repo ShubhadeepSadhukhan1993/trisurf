@@ -159,6 +159,9 @@ struct ts_vertex {
         ts_double solAngle;
 
 
+        
+		struct ts_poly *grafted_poly;
+		struct ts_cluster *cluster;
         /*Shubhadeep */
 
         ts_double Fx; 
@@ -173,11 +176,17 @@ struct ts_vertex {
         ts_double Factx;
         ts_double Facty; 
         ts_double Factz; 
-      
 
+        ts_double proj;
+        ts_double cx;
+        
+
+        ts_double Fbx;
+        ts_double Fby;
+        ts_double Fbz;
+
+        ts_double F_vtx;
         /*Shubhadeep */
-		struct ts_poly *grafted_poly;
-		struct ts_cluster *cluster;
 };
 
 typedef struct ts_vertex ts_vertex;
@@ -236,11 +245,13 @@ typedef struct ts_cell {
 
 typedef struct ts_cell_list{
     ts_uint ncmax[3];
+
     ts_uint cellno;
     ts_cell **cell;
     ts_double dcell;
     ts_double shift;
     ts_uint max_occupancy;
+    ts_double c_cm[3];
 	ts_double dmin_interspecies;
 } ts_cell_list;
 
@@ -337,13 +348,50 @@ typedef struct {
     long int shear_switch;
     ts_double nx;
     ts_double ny;
-    //ts_double Fud;
     /* Shubhadeep */
     long int F_noise_switch;
     ts_double F_noise_SD;
+
+
     ts_double lamda1;
     ts_double lamda2;
+    ts_double D;
+    long int inhibition_switch;
+    //long int inhibition_interval;
+    ts_double beta;
 
+    long int wall_switch;
+    ts_double wallx;
+    ts_double wally;
+    ts_double wall_theta;
+    ts_double cs;
+    ts_double conc0;
+
+    ts_double Fblow;
+    long int blow_switch;
+    ts_double wall_spring;
+    ts_double adhesion_spring;
+
+    long int box_confinement_switch;
+    long int confinement_adhesion_switch;
+    ts_double box_Lz;
+    ts_double box_Lx1;
+    ts_double box_Lx2;
+    ts_double box_Ly1;
+    ts_double box_Ly2;
+
+
+    long int notch_switch;
+    ts_double notch_angle;
+    ts_double notch_range;
+    ts_double notch_position;
+
+    ts_double adhesion_strength2;
+    ts_double patchx;
+    ts_double patchy;
+    ts_double patch_size;
+    
+    long int F_noise_interval;
 
 } ts_tape;
 
@@ -379,6 +427,16 @@ typedef struct {
 	ts_double area;
 	ts_confinement_plane confinement_plane;
 	ts_double adhesion_center;
+    /*Shubhadeep*/
+   
+    ts_double xnorm;
+    ts_double ynorm;
+    ts_double znorm;
+    ts_double proj_min;
+    ts_double proj_max;
+    ts_double vmag;
+    ts_double xback;
+    /*Shubhadeep*/
 } ts_vesicle;
 
 
@@ -387,6 +445,13 @@ struct ts_cluster{
 	ts_uint nvtx;
 	ts_uint idx;
 	ts_vertex **vtx;
+  ts_double x;
+  ts_double y;
+  ts_double z;
+  ts_double Factx;
+  ts_double Facty;
+  ts_double Factz;
+
 };
 
 typedef struct ts_cluster ts_cluster;

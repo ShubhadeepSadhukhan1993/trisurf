@@ -16,6 +16,43 @@
 #include <string.h>
 #include "constvol.h"
 
+ts_double find_max_x_for_notch(ts_vesicle *vesicle, ts_vertex *vtx){
+	if (fabs(vtx->y)>vesicle->tape->notch_range){
+		return vesicle->tape->notch_position+fabs(vtx->y)/tan(vesicle->tape->notch_angle);
+	}
+	else{
+		return (vtx->y*vtx->y/vesicle->tape->notch_range/2.+vesicle->tape->notch_range/2.)/tan(vesicle->tape->notch_angle)+vesicle->tape->notch_position;
+	}
+}
+
+ts_double confinement_y(ts_vesicle *vesicle, ts_vertex *vtx){
+	double dx=5;
+	double beta=2;
+	double Lx1, Lx2, Ly1, Ly2;
+	Lx1=vesicle->tape->box_Lx1;
+	Lx2=vesicle->tape->box_Lx2;
+	Ly1=vesicle->tape->box_Ly1;
+	Ly2=vesicle->tape->box_Ly2;
+
+	if (-Lx2/2.<=vtx->x && vtx->x<=-Lx1/2.-dx/2.){
+		return Ly2;
+	}
+	if (-Lx1/2.-dx/2.<=vtx->x && vtx->x<=-Lx1/2.+dx/2.){
+		return (Ly2-Ly1)/(1+exp(beta*(vtx->x+Lx1/2.)))+Ly1;
+	}
+	if (-Lx1/2.+dx/2.<=vtx->x && vtx->x<=Lx1/2.-dx/2.){
+		return Ly1;
+	}
+	if (Lx1/2.-dx/2.<=vtx->x && vtx->x<=Lx1/2.+dx/2.){
+		return (Ly1-Ly2)/(1+exp(beta*(vtx->x-Lx1/2.)))+Ly2;
+	}
+	if (Lx1/2.+dx/2.<=vtx->x && vtx->x<=Lx2/2.){
+		return Ly2;
+	}
+}
+
+
+
 ts_bool single_verticle_timestep(ts_vesicle *vesicle,ts_vertex *vtx,ts_double *rn){
     ts_uint i;
     ts_double dist;
@@ -101,7 +138,7 @@ if(vesicle->R_nucleus>0.0){
 	// adhesion check whether the new position of vertex will be out of bounds
 	if(vesicle->tape->adhesion_switch){
 		if (vesicle->tape->type_of_adhesion_model==1 || vesicle->tape->type_of_adhesion_model==2 || vesicle->tape->type_of_adhesion_model==6 || vesicle->tape->type_of_adhesion_model==7 || vesicle->tape->type_of_adhesion_model==8 || vesicle->tape->type_of_adhesion_model==9){
-			if(vtx->z<vesicle->tape->z_adhesion){
+			if(vtx->z<vesicle->tape->z_adhesion && vesicle->tape->adhesion_spring>1e10){
 			vtx=memcpy((void *)vtx,(void *)&backupvtx[0],sizeof(ts_vertex));
 			return TS_FAIL;
 			}
@@ -125,6 +162,64 @@ if(vesicle->R_nucleus>0.0){
 			return TS_FAIL;
 			}
 		}
+	}
+
+
+	//notch Shubhadeep
+
+	if (vesicle->tape->notch_switch){
+		double x_max=find_max_x_for_notch(vesicle, vtx);
+		if (vtx->x>=x_max){
+			vtx=memcpy((void *)vtx,(void *)&backupvtx[0],sizeof(ts_vertex));
+				return TS_FAIL;
+		}
+	}
+
+
+	// Wall  Shubhadeep
+	
+
+	if(vesicle->tape->wall_switch){
+		if (vesicle->tape->wall_spring>1e10){
+			double d=(vtx->y-vesicle->tape->wally)*cos(vesicle->tape->wall_theta)-(vtx->x-vesicle->tape->wallx)*sin(vesicle->tape->wall_theta);
+			if(d<0){
+				vtx=memcpy((void *)vtx,(void *)&backupvtx[0],sizeof(ts_vertex));
+				return TS_FAIL;
+			}
+		}
+	}
+	
+	double confined_y;
+
+	if (vesicle->tape->box_confinement_switch){
+		
+		if (vtx->z<vesicle->tape->z_adhesion || vtx->z>(vesicle->tape->z_adhesion+vesicle->tape->box_Lz)){
+			vtx=memcpy((void *)vtx,(void *)&backupvtx[0],sizeof(ts_vertex));
+			return TS_FAIL;
+		}
+		if (fabs(vtx->x) > vesicle->tape->box_Lx2/2.){
+			vtx=memcpy((void *)vtx,(void *)&backupvtx[0],sizeof(ts_vertex));
+			return TS_FAIL;
+		}
+		
+		
+		confined_y = confinement_y(vesicle, vtx)/2.;
+		
+		if (fabs(vtx->y)>confined_y){
+			vtx=memcpy((void *)vtx,(void *)&backupvtx[0],sizeof(ts_vertex));
+			return TS_FAIL;
+		} 
+		
+
+		/*
+		if (fabs(vtx->x)<vesicle->tape->box_Lx1/2. && fabs(vtx->y)>vesicle->tape->box_Ly1/2.){
+			vtx=memcpy((void *)vtx,(void *)&backupvtx[0],sizeof(ts_vertex));
+			return TS_FAIL;	
+		}
+		if(fabs(vtx->x)>vesicle->tape->box_Lx1/2. && fabs(vtx->y)>vesicle->tape->box_Ly2/2.){
+			vtx=memcpy((void *)vtx,(void *)&backupvtx[0],sizeof(ts_vertex));
+			return TS_FAIL;
+		}*/
 	}
 
 //#undef SQ
@@ -235,11 +330,19 @@ if(vesicle->R_nucleus>0.0){
 /* Vertices with spontaneous curvature may have spontaneous force perpendicular to the surface of the vesicle. additional delta energy is calculated in this function */
 
     /* Shubhadeep */
-    if (vesicle->tape->shear_switch){
-		delta_energy+=shear_force_energy(vesicle,vtx,backupvtx);
+   
+    if(vesicle->tape->wall_switch && vesicle->tape->wall_spring<1e10){
+    	delta_energy+=wall_force_energy(vesicle, vtx, backupvtx);
 	}
 
+	if (vesicle->tape->shear_switch){
+		delta_energy+=shear_force_energy(vesicle, vtx, backupvtx);
+	}
 	/* Shubhadeep */
+
+	if (vesicle->tape->blow_switch){
+		delta_energy+=blow_force_energy(vesicle, vtx, backupvtx);
+	}
 
 	if (vesicle->tape->force_balance_along_z_axis==0){
 		delta_energy+=direct_force_energy(vesicle,vtx,backupvtx);
@@ -249,13 +352,41 @@ if(vesicle->R_nucleus>0.0){
 	}
 	
 	
+	// wall_adhesive // shubhadeep //
+	
+	if (vesicle->tape->box_confinement_switch && vesicle->tape->confinement_adhesion_switch){
+		double confined_y2;
+		if (vtx->z>(vesicle->tape->z_adhesion+vesicle->tape->box_Lz-vesicle->tape->adhesion_cuttoff) ){
+			delta_energy-=vesicle->tape->adhesion_strength;
+		}
+		if (backupvtx[0].z>(vesicle->tape->z_adhesion+vesicle->tape->box_Lz-vesicle->tape->adhesion_cuttoff) ){
+			delta_energy+=vesicle->tape->adhesion_strength;
+		}
+		
+		if (vtx->x>vesicle->tape->box_Lx2/2.-vesicle->tape->adhesion_cuttoff || vtx->x<-vesicle->tape->box_Lx2/2.+vesicle->tape->adhesion_cuttoff){
+			delta_energy-=vesicle->tape->adhesion_strength;
+		}
+		if (backupvtx[0].x>vesicle->tape->box_Lx2/2.-vesicle->tape->adhesion_cuttoff || backupvtx[0].x<-vesicle->tape->box_Lx2/2.+vesicle->tape->adhesion_cuttoff){
+			delta_energy+=vesicle->tape->adhesion_strength;
+		}
+		
+		confined_y2=confinement_y(vesicle, &backupvtx[0])/2.;
+		
+		if (vtx->y>confined_y-vesicle->tape->adhesion_cuttoff || vtx->y<-confined_y+vesicle->tape->adhesion_cuttoff){
+			delta_energy-=vesicle->tape->adhesion_strength;
+		}
+		if (backupvtx[0].y>confined_y2-vesicle->tape->adhesion_cuttoff || backupvtx[0].y<-confined_y2+vesicle->tape->adhesion_cuttoff){
+			delta_energy+=vesicle->tape->adhesion_strength;
+		}
+
+	}
 
 	//stretching energy 2 of 3
 	if(vesicle->tape->stretchswitch==1){
 		for(i=0;i<vtx->tristar_no;i++){ 
 			stretchenergy(vesicle, vtx->tristar[i]);
 			dstretchenergy+=vtx->tristar[i]->energy;
-			}
+		}
 	}
 
 	delta_energy+=dstretchenergy;	
@@ -283,12 +414,17 @@ if(vesicle->R_nucleus>0.0){
 if(vesicle->tape->adhesion_switch){
 //1 for step potential
 	if(vesicle->tape->type_of_adhesion_model==1){
-
-		if(vtx->z-vesicle->tape->z_adhesion<vesicle->tape->adhesion_cuttoff){
+		if (vtx->z>vesicle->tape->z_adhesion){
+			if(vtx->z-vesicle->tape->z_adhesion<vesicle->tape->adhesion_cuttoff){
 				delta_energy-=vesicle->tape->adhesion_strength;
-		}
-		if(backupvtx[0].z-vesicle->tape->z_adhesion<vesicle->tape->adhesion_cuttoff){
+			}
+			if(backupvtx[0].z-vesicle->tape->z_adhesion<vesicle->tape->adhesion_cuttoff){
 				delta_energy+=vesicle->tape->adhesion_strength;
+			}
+		}
+		// Softness of adhesion wall
+		if (vtx->z<vesicle->tape->z_adhesion){
+			delta_energy+=vesicle->tape->adhesion_spring*pow(vtx->z-vesicle->tape->z_adhesion, 2)/2.;
 		}
 	}
 //2 for parabolic potential
@@ -385,30 +521,28 @@ if(vesicle->tape->adhesion_switch){
 	else if(vesicle->tape->type_of_adhesion_model==8){
 		//printf("Acting 8 %1.3f\n",vesicle->tape->lamda);
 		
-		/*
-		if(vtx->z-vesicle->tape->z_adhesion<vesicle->tape->adhesion_cuttoff){
-			if ((int)(floor((vtx->x-vesicle->tape->lamda/2.)/vesicle->tape->lamda))%2!=0){
-				delta_energy-=vesicle->tape->adhesion_strength;
-			}
-		}
-		if(backupvtx[0].z-vesicle->tape->z_adhesion<vesicle->tape->adhesion_cuttoff){
-			if ((int)(floor((backupvtx[0].x-vesicle->tape->lamda/2.)/vesicle->tape->lamda))%2!=0){
-				delta_energy+=vesicle->tape->adhesion_strength;
-			}
-		}
 		
-		*/
 		double xx;
+		double rr, radd;
+		radd=(vesicle->tape->lamda1+vesicle->tape->lamda2);
+
+		rr=vesicle->tape->lamda1/radd;
 		if(vtx->z-vesicle->tape->z_adhesion<vesicle->tape->adhesion_cuttoff){
-			xx=(vtx->x+vesicle->tape->lamda1/2.)/(vesicle->tape->lamda1+vesicle->tape->lamda2);
-			if (xx-floor(xx)<vesicle->tape->lamda1/(vesicle->tape->lamda1+vesicle->tape->lamda2)){
+			xx=(vtx->x+vesicle->tape->lamda1/2.)/radd;
+			if (xx-floor(xx)<rr){
 				delta_energy-=vesicle->tape->adhesion_strength;
+			}
+			else{
+				delta_energy-=vesicle->tape->adhesion_strength2;
 			}
 		}
 		if(backupvtx[0].z-vesicle->tape->z_adhesion<vesicle->tape->adhesion_cuttoff){
-			xx=(backupvtx[0].x+vesicle->tape->lamda1/2.)/(vesicle->tape->lamda1+vesicle->tape->lamda2);
-			if (xx-floor(xx)<vesicle->tape->lamda1/(vesicle->tape->lamda1+vesicle->tape->lamda2)){
+			xx=(backupvtx[0].x+vesicle->tape->lamda1/2.)/radd;
+			if (xx-floor(xx)<rr){
 				delta_energy+=vesicle->tape->adhesion_strength;
+			}
+			else{
+				delta_energy+=vesicle->tape->adhesion_strength2;
 			}
 		}
 
@@ -444,6 +578,27 @@ if(vesicle->tape->adhesion_switch){
 		}
 		if(backupvtx[0].z-vesicle->tape->z_adhesion<vesicle->tape->adhesion_cuttoff){
 				delta_energy+=dE_ad;
+		}
+	}
+	else if(vesicle->tape->type_of_adhesion_model==10){
+		if (vtx->z>vesicle->tape->z_adhesion){
+			if(vtx->z-vesicle->tape->z_adhesion<vesicle->tape->adhesion_cuttoff){
+				if (vtx->x>vesicle->tape->patchx && vtx->x<vesicle->tape->patchx+vesicle->tape->patch_size && vtx->y>vesicle->tape->patchy && vtx->y<vesicle->tape->patchy+vesicle->tape->patch_size){
+					delta_energy-=vesicle->tape->adhesion_strength2;
+				}
+				else{
+					delta_energy-=vesicle->tape->adhesion_strength;
+				}
+			}
+			if(backupvtx[0].z-vesicle->tape->z_adhesion<vesicle->tape->adhesion_cuttoff){
+				if (backupvtx[0].x>vesicle->tape->patchx && backupvtx[0].x<vesicle->tape->patchx+vesicle->tape->patch_size && backupvtx[0].y>vesicle->tape->patchy && backupvtx[0].y<vesicle->tape->patchy+vesicle->tape->patch_size){
+					delta_energy+=vesicle->tape->adhesion_strength2;
+				}
+				else{
+					delta_energy+=vesicle->tape->adhesion_strength;
+				}
+				//delta_energy+=vesicle->tape->adhesion_strength;
+			}
 		}
 	}
 //Shubhadeep

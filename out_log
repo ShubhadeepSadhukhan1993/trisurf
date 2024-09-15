@@ -1,0 +1,282 @@
+libtoolize: putting auxiliary files in `.'.
+libtoolize: linking file `./ltmain.sh'
+libtoolize: Consider adding `AC_CONFIG_MACRO_DIR([m4])' to configure.ac and
+libtoolize: rerunning libtoolize, to keep the correct libtool macros in-tree.
+libtoolize: Consider adding `-I m4' to ACLOCAL_AMFLAGS in Makefile.am.
+checking for a BSD-compatible install... /usr/bin/install -c
+checking whether build environment is sane... yes
+checking for a thread-safe mkdir -p... /usr/bin/mkdir -p
+checking for gawk... gawk
+checking whether make sets $(MAKE)... yes
+checking whether make supports nested variables... yes
+checking for gcc... gcc
+checking whether the C compiler works... yes
+checking for C compiler default output file name... a.out
+checking for suffix of executables... 
+checking whether we are cross compiling... no
+checking for suffix of object files... o
+checking whether we are using the GNU C compiler... yes
+checking whether gcc accepts -g... yes
+checking for gcc option to accept ISO C89... none needed
+checking for style of include used by make... GNU
+checking dependency style of gcc... gcc3
+checking build system type... x86_64-unknown-linux-gnu
+checking host system type... x86_64-unknown-linux-gnu
+checking how to print strings... printf
+checking for a sed that does not truncate output... /usr/bin/sed
+checking for grep that handles long lines and -e... /usr/bin/grep
+checking for egrep... /usr/bin/grep -E
+checking for fgrep... /usr/bin/grep -F
+checking for ld used by gcc... /usr/bin/ld
+checking if the linker (/usr/bin/ld) is GNU ld... yes
+checking for BSD- or MS-compatible name lister (nm)... /usr/bin/nm -B
+checking the name lister (/usr/bin/nm -B) interface... BSD nm
+checking whether ln -s works... yes
+checking the maximum length of command line arguments... 1572864
+checking whether the shell understands some XSI constructs... yes
+checking whether the shell understands "+="... yes
+checking how to convert x86_64-unknown-linux-gnu file names to x86_64-unknown-linux-gnu format... func_convert_file_noop
+checking how to convert x86_64-unknown-linux-gnu file names to toolchain format... func_convert_file_noop
+checking for /usr/bin/ld option to reload object files... -r
+checking for objdump... objdump
+checking how to recognize dependent libraries... pass_all
+checking for dlltool... no
+checking how to associate runtime and link libraries... printf %s\n
+checking for ar... ar
+checking for archiver @FILE support... @
+checking for strip... strip
+checking for ranlib... ranlib
+checking command to parse /usr/bin/nm -B output from gcc object... ok
+checking for sysroot... no
+checking for mt... no
+checking if : is a manifest tool... no
+checking how to run the C preprocessor... gcc -E
+checking for ANSI C header files... yes
+checking for sys/types.h... yes
+checking for sys/stat.h... yes
+checking for stdlib.h... yes
+checking for string.h... yes
+checking for memory.h... yes
+checking for strings.h... yes
+checking for inttypes.h... yes
+checking for stdint.h... yes
+checking for unistd.h... yes
+checking for dlfcn.h... yes
+checking for objdir... .libs
+checking if gcc supports -fno-rtti -fno-exceptions... no
+checking for gcc option to produce PIC... -fPIC -DPIC
+checking if gcc PIC flag -fPIC -DPIC works... yes
+checking if gcc static flag -static works... yes
+checking if gcc supports -c -o file.o... yes
+checking if gcc supports -c -o file.o... (cached) yes
+checking whether the gcc linker (/usr/bin/ld -m elf_x86_64) supports shared libraries... yes
+checking whether -lc should be explicitly linked in... no
+checking dynamic linker characteristics... GNU/Linux ld.so
+checking how to hardcode library paths into programs... immediate
+checking whether stripping libraries is possible... yes
+checking if libtool supports shared libraries... yes
+checking whether to build shared libraries... yes
+checking whether to build static libraries... yes
+checking for cfg_parse in -lconfuse... yes
+checking for pow in -lm... yes
+checking for cblas_dgemm in -lgslcblas... yes
+checking for gsl_blas_dgemm in -lgsl... yes
+checking for pkg-config... /usr/bin/pkg-config
+checking pkg-config is at least version 0.9.0... yes
+checking for libxml2... yes
+checking for deflate in -lz... yes
+checking for stdlib.h... (cached) yes
+checking for string.h... (cached) yes
+checking for inline... inline
+checking whether to enable debugging... no
+checking for stdlib.h... (cached) yes
+checking for GNU libc compatible malloc... yes
+checking for stdlib.h... (cached) yes
+checking for GNU libc compatible realloc... yes
+checking for pow... yes
+checking for sqrt... yes
+checking for strndup... yes
+checking that generated files are newer than configure... done
+configure: creating ./config.status
+config.status: creating Makefile
+config.status: creating src/Makefile
+config.status: creating config.h
+config.status: config.h is unchanged
+config.status: executing depfiles commands
+config.status: executing libtool commands
+Making clean in src
+make[1]: Entering directory `/gpfs01/home/shubsad/codes/trisurf_UCSP_dev3/src'
+ rm -f trisurf tsmeasure tspoststat
+test -z "libtrisurf.la" || rm -f libtrisurf.la
+rm -f ./so_locations
+rm -rf .libs _libs
+rm -f *.o
+rm -f *.lo
+make[1]: Leaving directory `/gpfs01/home/shubsad/codes/trisurf_UCSP_dev3/src'
+make[1]: Entering directory `/gpfs01/home/shubsad/codes/trisurf_UCSP_dev3'
+rm -rf .libs _libs
+rm -f *.lo
+make[1]: Leaving directory `/gpfs01/home/shubsad/codes/trisurf_UCSP_dev3'
+make  all-recursive
+make[1]: Entering directory `/gpfs01/home/shubsad/codes/trisurf_UCSP_dev3'
+Making all in src
+make[2]: Entering directory `/gpfs01/home/shubsad/codes/trisurf_UCSP_dev3/src'
+/bin/sh ../libtool  --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..  -I/usr/include/libxml2   -fgnu89-inline   -O3 -ffast-math -MT general.lo -MD -MP -MF .deps/general.Tpo -c -o general.lo general.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT general.lo -MD -MP -MF .deps/general.Tpo -c general.c  -fPIC -DPIC -o .libs/general.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT general.lo -MD -MP -MF .deps/general.Tpo -c general.c -o general.o >/dev/null 2>&1
+mv -f .deps/general.Tpo .deps/general.Plo
+/bin/sh ../libtool  --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..  -I/usr/include/libxml2   -fgnu89-inline   -O3 -ffast-math -MT vertex.lo -MD -MP -MF .deps/vertex.Tpo -c -o vertex.lo vertex.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT vertex.lo -MD -MP -MF .deps/vertex.Tpo -c vertex.c  -fPIC -DPIC -o .libs/vertex.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT vertex.lo -MD -MP -MF .deps/vertex.Tpo -c vertex.c -o vertex.o >/dev/null 2>&1
+mv -f .deps/vertex.Tpo .deps/vertex.Plo
+/bin/sh ../libtool  --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..  -I/usr/include/libxml2   -fgnu89-inline   -O3 -ffast-math -MT bond.lo -MD -MP -MF .deps/bond.Tpo -c -o bond.lo bond.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT bond.lo -MD -MP -MF .deps/bond.Tpo -c bond.c  -fPIC -DPIC -o .libs/bond.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT bond.lo -MD -MP -MF .deps/bond.Tpo -c bond.c -o bond.o >/dev/null 2>&1
+mv -f .deps/bond.Tpo .deps/bond.Plo
+/bin/sh ../libtool  --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..  -I/usr/include/libxml2   -fgnu89-inline   -O3 -ffast-math -MT triangle.lo -MD -MP -MF .deps/triangle.Tpo -c -o triangle.lo triangle.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT triangle.lo -MD -MP -MF .deps/triangle.Tpo -c triangle.c  -fPIC -DPIC -o .libs/triangle.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT triangle.lo -MD -MP -MF .deps/triangle.Tpo -c triangle.c -o triangle.o >/dev/null 2>&1
+mv -f .deps/triangle.Tpo .deps/triangle.Plo
+/bin/sh ../libtool  --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..  -I/usr/include/libxml2   -fgnu89-inline   -O3 -ffast-math -MT cell.lo -MD -MP -MF .deps/cell.Tpo -c -o cell.lo cell.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT cell.lo -MD -MP -MF .deps/cell.Tpo -c cell.c  -fPIC -DPIC -o .libs/cell.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT cell.lo -MD -MP -MF .deps/cell.Tpo -c cell.c -o cell.o >/dev/null 2>&1
+mv -f .deps/cell.Tpo .deps/cell.Plo
+/bin/sh ../libtool  --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..  -I/usr/include/libxml2   -fgnu89-inline   -O3 -ffast-math -MT vesicle.lo -MD -MP -MF .deps/vesicle.Tpo -c -o vesicle.lo vesicle.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT vesicle.lo -MD -MP -MF .deps/vesicle.Tpo -c vesicle.c  -fPIC -DPIC -o .libs/vesicle.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT vesicle.lo -MD -MP -MF .deps/vesicle.Tpo -c vesicle.c -o vesicle.o >/dev/null 2>&1
+mv -f .deps/vesicle.Tpo .deps/vesicle.Plo
+/bin/sh ../libtool  --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..  -I/usr/include/libxml2   -fgnu89-inline   -O3 -ffast-math -MT initial_distribution.lo -MD -MP -MF .deps/initial_distribution.Tpo -c -o initial_distribution.lo initial_distribution.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT initial_distribution.lo -MD -MP -MF .deps/initial_distribution.Tpo -c initial_distribution.c  -fPIC -DPIC -o .libs/initial_distribution.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT initial_distribution.lo -MD -MP -MF .deps/initial_distribution.Tpo -c initial_distribution.c -o initial_distribution.o >/dev/null 2>&1
+mv -f .deps/initial_distribution.Tpo .deps/initial_distribution.Plo
+/bin/sh ../libtool  --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..  -I/usr/include/libxml2   -fgnu89-inline   -O3 -ffast-math -MT io.lo -MD -MP -MF .deps/io.Tpo -c -o io.lo io.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT io.lo -MD -MP -MF .deps/io.Tpo -c io.c  -fPIC -DPIC -o .libs/io.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT io.lo -MD -MP -MF .deps/io.Tpo -c io.c -o io.o >/dev/null 2>&1
+mv -f .deps/io.Tpo .deps/io.Plo
+/bin/sh ../libtool  --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..  -I/usr/include/libxml2   -fgnu89-inline   -O3 -ffast-math -MT dumpstate.lo -MD -MP -MF .deps/dumpstate.Tpo -c -o dumpstate.lo dumpstate.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT dumpstate.lo -MD -MP -MF .deps/dumpstate.Tpo -c dumpstate.c  -fPIC -DPIC -o .libs/dumpstate.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT dumpstate.lo -MD -MP -MF .deps/dumpstate.Tpo -c dumpstate.c -o dumpstate.o >/dev/null 2>&1
+mv -f .deps/dumpstate.Tpo .deps/dumpstate.Plo
+/bin/sh ../libtool  --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..  -I/usr/include/libxml2   -fgnu89-inline   -O3 -ffast-math -MT frame.lo -MD -MP -MF .deps/frame.Tpo -c -o frame.lo frame.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT frame.lo -MD -MP -MF .deps/frame.Tpo -c frame.c  -fPIC -DPIC -o .libs/frame.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT frame.lo -MD -MP -MF .deps/frame.Tpo -c frame.c -o frame.o >/dev/null 2>&1
+mv -f .deps/frame.Tpo .deps/frame.Plo
+/bin/sh ../libtool  --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..  -I/usr/include/libxml2   -fgnu89-inline   -O3 -ffast-math -MT energy.lo -MD -MP -MF .deps/energy.Tpo -c -o energy.lo energy.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT energy.lo -MD -MP -MF .deps/energy.Tpo -c energy.c  -fPIC -DPIC -o .libs/energy.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT energy.lo -MD -MP -MF .deps/energy.Tpo -c energy.c -o energy.o >/dev/null 2>&1
+mv -f .deps/energy.Tpo .deps/energy.Plo
+/bin/sh ../libtool  --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..  -I/usr/include/libxml2   -fgnu89-inline   -O3 -ffast-math -MT timestep.lo -MD -MP -MF .deps/timestep.Tpo -c -o timestep.lo timestep.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT timestep.lo -MD -MP -MF .deps/timestep.Tpo -c timestep.c  -fPIC -DPIC -o .libs/timestep.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT timestep.lo -MD -MP -MF .deps/timestep.Tpo -c timestep.c -o timestep.o >/dev/null 2>&1
+mv -f .deps/timestep.Tpo .deps/timestep.Plo
+/bin/sh ../libtool  --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..  -I/usr/include/libxml2   -fgnu89-inline   -O3 -ffast-math -MT vertexmove.lo -MD -MP -MF .deps/vertexmove.Tpo -c -o vertexmove.lo vertexmove.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT vertexmove.lo -MD -MP -MF .deps/vertexmove.Tpo -c vertexmove.c  -fPIC -DPIC -o .libs/vertexmove.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT vertexmove.lo -MD -MP -MF .deps/vertexmove.Tpo -c vertexmove.c -o vertexmove.o >/dev/null 2>&1
+mv -f .deps/vertexmove.Tpo .deps/vertexmove.Plo
+/bin/sh ../libtool  --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..  -I/usr/include/libxml2   -fgnu89-inline   -O3 -ffast-math -MT bondflip.lo -MD -MP -MF .deps/bondflip.Tpo -c -o bondflip.lo bondflip.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT bondflip.lo -MD -MP -MF .deps/bondflip.Tpo -c bondflip.c  -fPIC -DPIC -o .libs/bondflip.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT bondflip.lo -MD -MP -MF .deps/bondflip.Tpo -c bondflip.c -o bondflip.o >/dev/null 2>&1
+mv -f .deps/bondflip.Tpo .deps/bondflip.Plo
+/bin/sh ../libtool  --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..  -I/usr/include/libxml2   -fgnu89-inline   -O3 -ffast-math -MT poly.lo -MD -MP -MF .deps/poly.Tpo -c -o poly.lo poly.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT poly.lo -MD -MP -MF .deps/poly.Tpo -c poly.c  -fPIC -DPIC -o .libs/poly.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT poly.lo -MD -MP -MF .deps/poly.Tpo -c poly.c -o poly.o >/dev/null 2>&1
+mv -f .deps/poly.Tpo .deps/poly.Plo
+/bin/sh ../libtool  --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..  -I/usr/include/libxml2   -fgnu89-inline   -O3 -ffast-math -MT stats.lo -MD -MP -MF .deps/stats.Tpo -c -o stats.lo stats.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT stats.lo -MD -MP -MF .deps/stats.Tpo -c stats.c  -fPIC -DPIC -o .libs/stats.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT stats.lo -MD -MP -MF .deps/stats.Tpo -c stats.c -o stats.o >/dev/null 2>&1
+mv -f .deps/stats.Tpo .deps/stats.Plo
+/bin/sh ../libtool  --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..  -I/usr/include/libxml2   -fgnu89-inline   -O3 -ffast-math -MT sh.lo -MD -MP -MF .deps/sh.Tpo -c -o sh.lo sh.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT sh.lo -MD -MP -MF .deps/sh.Tpo -c sh.c  -fPIC -DPIC -o .libs/sh.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT sh.lo -MD -MP -MF .deps/sh.Tpo -c sh.c -o sh.o >/dev/null 2>&1
+mv -f .deps/sh.Tpo .deps/sh.Plo
+/bin/sh ../libtool  --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..  -I/usr/include/libxml2   -fgnu89-inline   -O3 -ffast-math -MT shcomplex.lo -MD -MP -MF .deps/shcomplex.Tpo -c -o shcomplex.lo shcomplex.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT shcomplex.lo -MD -MP -MF .deps/shcomplex.Tpo -c shcomplex.c  -fPIC -DPIC -o .libs/shcomplex.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT shcomplex.lo -MD -MP -MF .deps/shcomplex.Tpo -c shcomplex.c -o shcomplex.o >/dev/null 2>&1
+mv -f .deps/shcomplex.Tpo .deps/shcomplex.Plo
+/bin/sh ../libtool  --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..  -I/usr/include/libxml2   -fgnu89-inline   -O3 -ffast-math -MT constvol.lo -MD -MP -MF .deps/constvol.Tpo -c -o constvol.lo constvol.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT constvol.lo -MD -MP -MF .deps/constvol.Tpo -c constvol.c  -fPIC -DPIC -o .libs/constvol.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT constvol.lo -MD -MP -MF .deps/constvol.Tpo -c constvol.c -o constvol.o >/dev/null 2>&1
+mv -f .deps/constvol.Tpo .deps/constvol.Plo
+/bin/sh ../libtool  --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..  -I/usr/include/libxml2   -fgnu89-inline   -O3 -ffast-math -MT snapshot.lo -MD -MP -MF .deps/snapshot.Tpo -c -o snapshot.lo snapshot.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT snapshot.lo -MD -MP -MF .deps/snapshot.Tpo -c snapshot.c  -fPIC -DPIC -o .libs/snapshot.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT snapshot.lo -MD -MP -MF .deps/snapshot.Tpo -c snapshot.c -o snapshot.o >/dev/null 2>&1
+mv -f .deps/snapshot.Tpo .deps/snapshot.Plo
+/bin/sh ../libtool  --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..  -I/usr/include/libxml2   -fgnu89-inline   -O3 -ffast-math -MT restore.lo -MD -MP -MF .deps/restore.Tpo -c -o restore.lo restore.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT restore.lo -MD -MP -MF .deps/restore.Tpo -c restore.c  -fPIC -DPIC -o .libs/restore.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT restore.lo -MD -MP -MF .deps/restore.Tpo -c restore.c -o restore.o >/dev/null 2>&1
+mv -f .deps/restore.Tpo .deps/restore.Plo
+/bin/sh ../libtool  --tag=CC   --mode=compile gcc -DHAVE_CONFIG_H -I. -I..  -I/usr/include/libxml2   -fgnu89-inline   -O3 -ffast-math -MT cluster.lo -MD -MP -MF .deps/cluster.Tpo -c -o cluster.lo cluster.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT cluster.lo -MD -MP -MF .deps/cluster.Tpo -c cluster.c  -fPIC -DPIC -o .libs/cluster.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/usr/include/libxml2 -fgnu89-inline -O3 -ffast-math -MT cluster.lo -MD -MP -MF .deps/cluster.Tpo -c cluster.c -o cluster.o >/dev/null 2>&1
+mv -f .deps/cluster.Tpo .deps/cluster.Plo
+/bin/sh ../libtool  --tag=CC   --mode=link gcc  -O3 -ffast-math   -o libtrisurf.la -rpath /home/shubsad/shubsad_user/lib general.lo vertex.lo bond.lo triangle.lo cell.lo vesicle.lo initial_distribution.lo io.lo dumpstate.lo frame.lo energy.lo timestep.lo vertexmove.lo bondflip.lo poly.lo stats.lo sh.lo shcomplex.lo constvol.lo snapshot.lo restore.lo cluster.lo -lxml2   -lz -lgsl -lgslcblas -lm -lconfuse 
+libtool: link: gcc -shared  -fPIC -DPIC  .libs/general.o .libs/vertex.o .libs/bond.o .libs/triangle.o .libs/cell.o .libs/vesicle.o .libs/initial_distribution.o .libs/io.o .libs/dumpstate.o .libs/frame.o .libs/energy.o .libs/timestep.o .libs/vertexmove.o .libs/bondflip.o .libs/poly.o .libs/stats.o .libs/sh.o .libs/shcomplex.o .libs/constvol.o .libs/snapshot.o .libs/restore.o .libs/cluster.o   -lxml2 -lz -lgsl -lgslcblas -lm -lconfuse  -O3   -Wl,-soname -Wl,libtrisurf.so.0 -o .libs/libtrisurf.so.0.0.0
+libtool: link: (cd ".libs" && rm -f "libtrisurf.so.0" && ln -s "libtrisurf.so.0.0.0" "libtrisurf.so.0")
+libtool: link: (cd ".libs" && rm -f "libtrisurf.so" && ln -s "libtrisurf.so.0.0.0" "libtrisurf.so")
+libtool: link: ar cru .libs/libtrisurf.a  general.o vertex.o bond.o triangle.o cell.o vesicle.o initial_distribution.o io.o dumpstate.o frame.o energy.o timestep.o vertexmove.o bondflip.o poly.o stats.o sh.o shcomplex.o constvol.o snapshot.o restore.o cluster.o
+libtool: link: ranlib .libs/libtrisurf.a
+libtool: link: ( cd ".libs" && rm -f "libtrisurf.la" && ln -s "../libtrisurf.la" "libtrisurf.la" )
+gcc -DHAVE_CONFIG_H -I. -I..  -I/usr/include/libxml2   -fgnu89-inline   -O3 -ffast-math -MT main.o -MD -MP -MF .deps/main.Tpo -c -o main.o main.c
+mv -f .deps/main.Tpo .deps/main.Po
+/bin/sh ../libtool  --tag=CC   --mode=link gcc  -O3 -ffast-math   -o trisurf main.o libtrisurf.la  -lxml2   -lz -lgsl -lgslcblas -lm -lconfuse 
+libtool: link: gcc -O3 -ffast-math -o .libs/trisurf main.o  ./.libs/libtrisurf.so -lxml2 -lz -lgsl -lgslcblas -lm -lconfuse -Wl,-rpath -Wl,/home/shubsad/shubsad_user/lib
+gcc -DHAVE_CONFIG_H -I. -I..  -I/usr/include/libxml2   -fgnu89-inline   -O3 -ffast-math -MT tsmeasure.o -MD -MP -MF .deps/tsmeasure.Tpo -c -o tsmeasure.o tsmeasure.c
+mv -f .deps/tsmeasure.Tpo .deps/tsmeasure.Po
+/bin/sh ../libtool  --tag=CC   --mode=link gcc  -O3 -ffast-math   -o tsmeasure tsmeasure.o libtrisurf.la  -lxml2   -lz -lgsl -lgslcblas -lm -lconfuse 
+libtool: link: gcc -O3 -ffast-math -o .libs/tsmeasure tsmeasure.o  ./.libs/libtrisurf.so -lxml2 -lz -lgsl -lgslcblas -lm -lconfuse -Wl,-rpath -Wl,/home/shubsad/shubsad_user/lib
+gcc -DHAVE_CONFIG_H -I. -I..  -I/usr/include/libxml2   -fgnu89-inline   -O3 -ffast-math -MT tspoststat.o -MD -MP -MF .deps/tspoststat.Tpo -c -o tspoststat.o tspoststat.c
+mv -f .deps/tspoststat.Tpo .deps/tspoststat.Po
+/bin/sh ../libtool  --tag=CC   --mode=link gcc  -O3 -ffast-math   -o tspoststat tspoststat.o libtrisurf.la  -lxml2   -lz -lgsl -lgslcblas -lm -lconfuse 
+libtool: link: gcc -O3 -ffast-math -o .libs/tspoststat tspoststat.o  ./.libs/libtrisurf.so -lxml2 -lz -lgsl -lgslcblas -lm -lconfuse -Wl,-rpath -Wl,/home/shubsad/shubsad_user/lib
+make[2]: Leaving directory `/gpfs01/home/shubsad/codes/trisurf_UCSP_dev3/src'
+make[2]: Entering directory `/gpfs01/home/shubsad/codes/trisurf_UCSP_dev3'
+make[2]: Leaving directory `/gpfs01/home/shubsad/codes/trisurf_UCSP_dev3'
+make[1]: Leaving directory `/gpfs01/home/shubsad/codes/trisurf_UCSP_dev3'
+Making install in src
+make[1]: Entering directory `/gpfs01/home/shubsad/codes/trisurf_UCSP_dev3/src'
+make[2]: Entering directory `/gpfs01/home/shubsad/codes/trisurf_UCSP_dev3/src'
+ /usr/bin/mkdir -p '/home/shubsad/shubsad_user/lib'
+ /bin/sh ../libtool   --mode=install /usr/bin/install -c   libtrisurf.la '/home/shubsad/shubsad_user/lib'
+libtool: install: /usr/bin/install -c .libs/libtrisurf.so.0.0.0 /home/shubsad/shubsad_user/lib/libtrisurf.so.0.0.0
+libtool: install: (cd /home/shubsad/shubsad_user/lib && { ln -s -f libtrisurf.so.0.0.0 libtrisurf.so.0 || { rm -f libtrisurf.so.0 && ln -s libtrisurf.so.0.0.0 libtrisurf.so.0; }; })
+libtool: install: (cd /home/shubsad/shubsad_user/lib && { ln -s -f libtrisurf.so.0.0.0 libtrisurf.so || { rm -f libtrisurf.so && ln -s libtrisurf.so.0.0.0 libtrisurf.so; }; })
+libtool: install: /usr/bin/install -c .libs/libtrisurf.lai /home/shubsad/shubsad_user/lib/libtrisurf.la
+libtool: install: /usr/bin/install -c .libs/libtrisurf.a /home/shubsad/shubsad_user/lib/libtrisurf.a
+libtool: install: chmod 644 /home/shubsad/shubsad_user/lib/libtrisurf.a
+libtool: install: ranlib /home/shubsad/shubsad_user/lib/libtrisurf.a
+libtool: finish: PATH="/home/shubsad/local/bin:/usr/lib64/qt-3.3/bin:/apps01/apps/intel/impi/2017/bin64:/apps01/apps/intel/2017/compilers_and_libraries_2017/linux/bin/intel64:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/usr/lpp/mmfs/bin:/apps01/apps/bin:/opt/pbs/bin:/home/shubsad/shubsad_user/bin/:/home/shubsad/.local/bin:/home/shubsad/bin:/sbin" ldconfig -n /home/shubsad/shubsad_user/lib
+----------------------------------------------------------------------
+Libraries have been installed in:
+   /home/shubsad/shubsad_user/lib
+
+If you ever happen to want to link against installed libraries
+in a given directory, LIBDIR, you must either use libtool, and
+specify the full pathname of the library, or use the `-LLIBDIR'
+flag during linking and do at least one of the following:
+   - add LIBDIR to the `LD_LIBRARY_PATH' environment variable
+     during execution
+   - add LIBDIR to the `LD_RUN_PATH' environment variable
+     during linking
+   - use the `-Wl,-rpath -Wl,LIBDIR' linker flag
+   - have your system administrator add LIBDIR to `/etc/ld.so.conf'
+
+See any operating system documentation about shared libraries for
+more information, such as the ld(1) and ld.so(8) manual pages.
+----------------------------------------------------------------------
+ /usr/bin/mkdir -p '/home/shubsad/shubsad_user/bin'
+  /bin/sh ../libtool   --mode=install /usr/bin/install -c trisurf tsmeasure tspoststat '/home/shubsad/shubsad_user/bin'
+libtool: install: /usr/bin/install -c .libs/trisurf /home/shubsad/shubsad_user/bin/trisurf
+libtool: install: /usr/bin/install -c .libs/tsmeasure /home/shubsad/shubsad_user/bin/tsmeasure
+libtool: install: /usr/bin/install -c .libs/tspoststat /home/shubsad/shubsad_user/bin/tspoststat
+ /usr/bin/mkdir -p '/home/shubsad/shubsad_user/include/trisurf_ng'
+ /usr/bin/install -c -m 644 general.h vertex.h bond.h triangle.h cell.h vesicle.h initial_distribution.h io.h dumpstate.h frame.h energy.h timestep.h vertexmove.h bondflip.h poly.h stats.h sh.h shcomplex.h constvol.h snapshot.h restore.h cluster.h '/home/shubsad/shubsad_user/include/trisurf_ng'
+make[2]: Leaving directory `/gpfs01/home/shubsad/codes/trisurf_UCSP_dev3/src'
+make[1]: Leaving directory `/gpfs01/home/shubsad/codes/trisurf_UCSP_dev3/src'
+make[1]: Entering directory `/gpfs01/home/shubsad/codes/trisurf_UCSP_dev3'
+make[2]: Entering directory `/gpfs01/home/shubsad/codes/trisurf_UCSP_dev3'
+make[2]: Nothing to be done for `install-exec-am'.
+make[2]: Nothing to be done for `install-data-am'.
+make[2]: Leaving directory `/gpfs01/home/shubsad/codes/trisurf_UCSP_dev3'
+make[1]: Leaving directory `/gpfs01/home/shubsad/codes/trisurf_UCSP_dev3'
+Warning!
+Python scripts for running the trisurf-ng have been moved to separate package

@@ -688,7 +688,7 @@ ts_bool parse_args(int argc, char **argv)
 
 ts_bool print_help(FILE *fd)
 {
-    //fprintf(fd, "TRISURF-NG v. %s, compiled on: %s %s.\n", TS_VERSION, __DATE__, __TIME__);
+  //  fprintf(fd, "TRISURF-NG v. %s, compiled on: %s %s.\n", TS_VERSION, __DATE__, __TIME__);
     fprintf(fd, "Programming done by: Samo Penic and Miha Fosnaric\n");
     fprintf(fd, "Released under terms of GPLv3\n\n");
 
@@ -1149,7 +1149,20 @@ ts_bool write_vertex_xml_file(ts_vesicle *vesicle, ts_uint timestepno, ts_cluste
     {
         fprintf(fh, "%.17e %.17e %.17e\n", vtx[i]->Fshx, vtx[i]->Fshy, vtx[i]->Fshz);
     }
+
     
+    
+    fprintf(fh, "\n</DataArray>\n<DataArray type=\"Float64\" Name=\"normals\" NumberOfComponents=\"3\" format=\"ascii\">\n");
+    for (i = 0; i < vlist->n; i++)
+    {
+        fprintf(fh, "%.17e %.17e %.17e\n", vtx[i]->Fx, vtx[i]->Fy, vtx[i]->Fz);
+    }
+    
+    fprintf(fh, "\n</DataArray>\n<DataArray type=\"Float64\" Name=\"blow_force\" NumberOfComponents=\"3\" format=\"ascii\">\n");
+    for (i = 0; i < vlist->n; i++)
+    {
+        fprintf(fh, "%.17e %.17e %.17e\n", vtx[i]->Fbx, vtx[i]->Fby, vtx[i]->Fbz);
+    }
 
     fprintf(fh, "\n</DataArray>\n<DataArray type=\"Float64\" Name=\"active force\" NumberOfComponents=\"3\" format=\"ascii\">\n");
     for (i = 0; i < vlist->n; i++)
@@ -1157,6 +1170,73 @@ ts_bool write_vertex_xml_file(ts_vesicle *vesicle, ts_uint timestepno, ts_cluste
         fprintf(fh, "%.17e %.17e %.17e\n", vtx[i]->Factx, vtx[i]->Facty, vtx[i]->Factz);
     }
 
+    fprintf(fh, "</DataArray>\n");
+
+
+    fprintf(fh, "<DataArray type=\"Float64\" Name=\"concentration\" format=\"ascii\">");
+    for (i = 0; i < vlist->n; i++)
+    {
+        fprintf(fh, "%.17e ", vtx[i]->cx);
+    }
+    //polymeres
+    if (poly)
+    {
+        poly_idx = vlist->n;
+        for (i = 0; i < vesicle->poly_list->n; i++)
+        {
+            for (j = 0; j < vesicle->poly_list->poly[i]->vlist->n; j++, poly_idx++)
+            {
+                fprintf(fh, "%.17e ", vesicle->poly_list->poly[i]->vlist->vtx[j]->cx);
+            }
+        }
+    }
+    //filaments
+    if (fil)
+    {
+        poly_idx = vlist->n + monono * polyno;
+        for (i = 0; i < vesicle->filament_list->n; i++)
+        {
+            for (j = 0; j < vesicle->filament_list->poly[i]->vlist->n; j++, poly_idx++)
+            {
+                //  fprintf(stderr,"was here\n");
+                fprintf(fh, "%.17e ", vesicle->filament_list->poly[i]->vlist->vtx[j]->cx);
+            }
+        }
+    }
+    
+    fprintf(fh, "</DataArray>\n");
+
+    fprintf(fh, "<DataArray type=\"Float64\" Name=\"projection\" format=\"ascii\">");
+    for (i = 0; i < vlist->n; i++)
+    {
+        fprintf(fh, "%.17e ", (vtx[i]->proj-0*vesicle->proj_min));
+    }
+    //polymeres
+    if (poly)
+    {
+        poly_idx = vlist->n;
+        for (i = 0; i < vesicle->poly_list->n; i++)
+        {
+            for (j = 0; j < vesicle->poly_list->poly[i]->vlist->n; j++, poly_idx++)
+            {
+                fprintf(fh, "%.17e ", vesicle->poly_list->poly[i]->vlist->vtx[j]->proj);
+            }
+        }
+    }
+    //filaments
+    if (fil)
+    {
+        poly_idx = vlist->n + monono * polyno;
+        for (i = 0; i < vesicle->filament_list->n; i++)
+        {
+            for (j = 0; j < vesicle->filament_list->poly[i]->vlist->n; j++, poly_idx++)
+            {
+                //  fprintf(stderr,"was here\n");
+                fprintf(fh, "%.17e ", vesicle->filament_list->poly[i]->vlist->vtx[j]->proj);
+            }
+        }
+    }
+    
     fprintf(fh, "</DataArray>\n");
 
     fprintf(fh, "</PointData>\n<CellData>\n");
@@ -1383,7 +1463,8 @@ ts_tape *parsetapebuffer(char *buffer)
 {
     ts_tape *tape = (ts_tape *)calloc(1, sizeof(ts_tape));
     tape->multiprocessing = calloc(255, sizeof(char));
-
+    tape->adhesion_spring=1e11;
+    tape->wall_spring=1e11;
     cfg_opt_t opts[] = {
         CFG_SIMPLE_INT("nshell", &tape->nshell),
         CFG_SIMPLE_INT("npoly", &tape->npoly),
@@ -1437,9 +1518,12 @@ ts_tape *parsetapebuffer(char *buffer)
         CFG_SIMPLE_INT("F_noise_switch", &tape->F_noise_switch),
         CFG_SIMPLE_FLOAT("F_noise_SD", &tape->F_noise_SD),
         //CFG_SIMPLE_FLOAT("Fud", &tape->Fud),
+        /* Shubhadeep */
         CFG_SIMPLE_FLOAT("lamda1", &tape->lamda1),
         CFG_SIMPLE_FLOAT("lamda2", &tape->lamda2),
-
+        CFG_SIMPLE_FLOAT("D", &tape->D),
+        CFG_SIMPLE_INT("inhibition_switch", &tape->inhibition_switch),
+        CFG_SIMPLE_FLOAT("beta", &tape->beta),
         /* Shubhadeep */
         /************************************/
         /* Variables related to plane confinement */
@@ -1450,8 +1534,46 @@ ts_tape *parsetapebuffer(char *buffer)
         CFG_INT("adhesion_switch", 0, CFGF_NONE),
         CFG_FLOAT("adhesion_cuttoff", 15, CFGF_NONE),
         CFG_FLOAT("adhesion_strength", 1000, CFGF_NONE),
+        
         CFG_FLOAT("adhesion_radius", 1000, CFGF_NONE),
         CFG_FLOAT("z_adhesion", 1000, CFGF_NONE),
+        
+        CFG_SIMPLE_INT("wall_switch", &tape->wall_switch),
+        CFG_SIMPLE_FLOAT("wallx", &tape->wallx),
+        CFG_SIMPLE_FLOAT("wally", &tape->wally),
+        CFG_SIMPLE_FLOAT("wall_theta", &tape->wall_theta),
+
+
+        CFG_SIMPLE_FLOAT("cs", &tape->cs),
+        CFG_SIMPLE_FLOAT("conc0", &tape->conc0),
+
+
+        CFG_SIMPLE_INT("blow_switch", &tape->blow_switch),
+        CFG_SIMPLE_FLOAT("Fblow", &tape->Fblow),
+
+        CFG_SIMPLE_FLOAT("wall_spring", &tape->wall_spring),
+
+        CFG_SIMPLE_FLOAT("adhesion_spring", &tape->adhesion_spring),
+
+        CFG_SIMPLE_INT("box_confinement_switch", &tape->box_confinement_switch),
+        CFG_SIMPLE_INT("confinement_adhesion_switch", &tape->confinement_adhesion_switch),
+        CFG_SIMPLE_FLOAT("box_Lz", &tape->box_Lz),
+        CFG_SIMPLE_FLOAT("box_Lx1", &tape->box_Lx1),
+        CFG_SIMPLE_FLOAT("box_Lx2", &tape->box_Lx2),
+        CFG_SIMPLE_FLOAT("box_Ly1", &tape->box_Ly1),
+        CFG_SIMPLE_FLOAT("box_Ly2", &tape->box_Ly2),
+
+        CFG_SIMPLE_INT("notch_switch", &tape->notch_switch),
+        CFG_SIMPLE_FLOAT("notch_angle", &tape->notch_angle),
+        CFG_SIMPLE_FLOAT("notch_range", &tape->notch_range),
+        CFG_SIMPLE_FLOAT("notch_position", &tape->notch_position),
+       
+        CFG_SIMPLE_FLOAT("adhesion_strength2", &tape->adhesion_strength2),
+
+        CFG_SIMPLE_FLOAT("patchx", &tape->patchx),
+        CFG_SIMPLE_FLOAT("patchy", &tape->patchy),
+        CFG_SIMPLE_FLOAT("patch_size", &tape->patch_size),
+        CFG_SIMPLE_INT("F_noise_interval", &tape->F_noise_interval),
         /* Variables related to stretching */
         //	CFG_FLOAT("stretchswitch", 0, CFGF_NONE),
         //	CFG_FLOAT("xkA0",0,CFGF_NONE),
@@ -1470,10 +1592,13 @@ ts_tape *parsetapebuffer(char *buffer)
     tape->adhesion_switch = cfg_getint(cfg, "adhesion_switch");
     tape->adhesion_cuttoff = cfg_getfloat(cfg, "adhesion_cuttoff");
     tape->adhesion_strength = cfg_getfloat(cfg, "adhesion_strength");
+    
     tape->adhesion_radius = cfg_getfloat(cfg, "adhesion_radius");
     tape->z_adhesion = cfg_getfloat(cfg, "z_adhesion");
 
 
+    tape->wall_theta=tape->wall_theta*M_PI/180.;
+    tape->notch_angle=tape->notch_angle*M_PI/180.;
     if (retval == CFG_FILE_ERROR)
     {
         fatal("No tape file.", 100);

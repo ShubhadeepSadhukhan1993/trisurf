@@ -35,7 +35,7 @@
 
 
 int main(int argv, char *argc[]){
-	
+	printf("Latest Version 25 Feb\n\n");
 	gsl_rng_env_setup();
 	TT = gsl_rng_default;
 	rr_noise = gsl_rng_alloc (TT);
@@ -50,7 +50,7 @@ int main(int argv, char *argc[]){
 	/* create lock file */
 	createPidFile("ts_trisurf",".lock",0);
 	parse_args(argv, argc); // sets global variable command_line_args (defined in io.h)
-	//ts_fprintf(stdout,"TRISURF-NG v. %s, compiled on: %s %s.\n", TS_VERSION, __DATE__, __TIME__);
+//	ts_fprintf(stdout,"TRISURF-NG v. %s, compiled on: %s %s.\n", TS_VERSION, __DATE__, __TIME__);
 	ts_fprintf(stdout,"Programming done by: Samo Penic and Miha Fosnaric\n");
 	ts_fprintf(stdout,"Released under terms of GPLv3\n");
 	ts_fprintf(stdout,"Starting program...\n\n");
@@ -70,7 +70,7 @@ int main(int argv, char *argc[]){
 			arguments_no=fscanf(fd,"%u", &start_iteration);
 			if(arguments_no==0){
 				ts_fprintf(stdout,"No information of start iteration in .status file\n");
-				}
+			}
 			fclose(fd);
 			start_iteration++; 
 		}
@@ -150,11 +150,15 @@ int main(int argv, char *argc[]){
 
 			//write_vertex_xml_file(vesicle,1000);
 
+    //printf("adhesion_strength2 %1.8e\n", vesicle->tape->adhesion_strength2);
+	//printf("%1.6f %d\n", vesicle->tape->box_Lz, vesicle->tape->box_confinement_switch);
+	
 	run_simulation(vesicle, tape->mcsweeps, tape->inititer, tape->iterations, start_iteration);
 	write_master_xml_file(command_line_args.output_fullfilename);
 	write_dout_fcompat_file(vesicle,"dout");
 	vesicle_free(vesicle);
 	tape_free(tape);
+	
 	
 	return 0; //program finished perfectly ok. We return 0.
 } 

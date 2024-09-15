@@ -15,9 +15,11 @@ ts_cluster_list *init_cluster_list(){
 }
 
 ts_cluster *new_cluster(ts_cluster_list *cstlist){
-	
+	//printf("hi3 %d\n", cstlist->n);
 	cstlist->n++;
+	//printf("hi3 %d\n", cstlist->n);
 	cstlist->cluster=(ts_cluster **)realloc(cstlist->cluster,cstlist->n*sizeof(ts_cluster *));
+	//printf("hi3\n");
 	if(cstlist->cluster==NULL) fatal("Cannot reallocate memory for additional **ts_cluster.",100);
 	cstlist->cluster[cstlist->n-1]=(ts_cluster *)calloc(1,sizeof(ts_cluster));
 	if(cstlist->cluster[cstlist->n-1]==NULL) fatal("Cannot allocate memory for additional *ts_cluster.",100);
@@ -80,8 +82,10 @@ ts_bool cluster_join(ts_cluster_list *cstlist, ts_cluster *cluster1, ts_cluster 
 
 ts_bool cluster_free(ts_cluster *cluster){
 	if(cluster!=NULL){
-		if(cluster->vtx!=NULL)
+		if(cluster->vtx!=NULL){
 			free(cluster->vtx);
+		}
+		
 		free(cluster);
 	}
 	return TS_SUCCESS;
@@ -113,6 +117,7 @@ ts_bool is_clusterable(ts_vertex *vtx){
 
 ts_cluster *cluster_vertex_neighbor(ts_vertex *vtx){
 	int j;
+
 	for(j=0;j<vtx->neigh_no;j++){
 		if(vtx->neigh[j]->cluster!=NULL)
 			return vtx->neigh[j]->cluster;
@@ -135,22 +140,30 @@ ts_bool cluster_vertex_neighbor_check(ts_cluster_list *cstlist, ts_vertex *vtx){
 
 
 ts_bool clusterize_vesicle(ts_vesicle *vesicle, ts_cluster_list *cstlist){
-
+	
 	int i;
 	ts_vertex *vtx;
 	ts_cluster *cst;
 	for(i=0;i<vesicle->vlist->n;i++){
 	//for each vertex
 		vtx=vesicle->vlist->vtx[i];
+		
 		if(is_clusterable(vtx)){
+
 			if(vtx->cluster==NULL){
 				//find first neigbor with cluster index
+
 				cst=cluster_vertex_neighbor(vtx);
+				
 				if(cst==NULL){
 					//no clusters are around us, vo we are probably lonely vertex or no surronding vertex has been mapped yet.
 					cst=new_cluster(cstlist);
+					
 					cluster_add_vertex(cst,vtx);
+					
+
 				} else {
+					
 					//we are added to the first cluster found
 					cluster_add_vertex(cst,vtx);
 					cluster_vertex_neighbor_check(cstlist, vtx);
@@ -163,4 +176,40 @@ ts_bool clusterize_vesicle(ts_vesicle *vesicle, ts_cluster_list *cstlist){
 
 
 	return TS_SUCCESS;
+}
+
+void cluster_mean(ts_cluster *cluster, ts_vesicle *vesicle){
+
+	cluster->x=0;
+	cluster->y=0;
+	cluster->z=0;
+
+	cluster->Factx=0;
+	cluster->Facty=0;
+	cluster->Factz=0;
+	int i;
+	double weight2=0;
+
+	double weight;
+	for (i=0; i<cluster->nvtx; i++){
+		weight=sqrt(pow(cluster->vtx[i]->Factx, 2)+pow(cluster->vtx[i]->Facty,2)+pow(cluster->vtx[i]->Factz,2));
+		//weight=1;
+		
+		weight2+=weight;
+		cluster->x+=(cluster->vtx[i]->x-vesicle->cm[0])*weight;
+		cluster->y+=(cluster->vtx[i]->y-vesicle->cm[1])*weight;
+		cluster->z+=(cluster->vtx[i]->z-vesicle->cm[2])*weight;
+		cluster->Factx+=cluster->vtx[i]->Factx;
+		cluster->Factx+=cluster->vtx[i]->Facty;
+		cluster->Factx+=cluster->vtx[i]->Factz;
+	}
+	cluster->x/=cluster->nvtx;
+	cluster->y/=cluster->nvtx;
+	cluster->z/=cluster->nvtx;
+
+	cluster->x+=vesicle->cm[0];
+	cluster->y+=vesicle->cm[1];
+	cluster->z+=vesicle->cm[2];
+
+		
 }

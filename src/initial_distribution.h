@@ -40,3 +40,5 @@ ts_bool init_triangle_neighbours(ts_vesicle *vesicle);
 ts_bool init_common_vertex_triangle_neighbours(ts_vesicle *vesicle);
 ts_bool init_normal_vectors(ts_triangle_list *tlist);
 
+void init_direct_force(ts_vesicle *vesicle);
+void init_direct_vtx_force(ts_vesicle *vesicle, ts_vertex *vtx);

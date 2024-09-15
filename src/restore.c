@@ -114,7 +114,7 @@ ts_vesicle *parseTrisurfTag(xmlDocPtr doc, xmlNodePtr cur){
 	//fprintf(stderr,"Parsing trisurf tag\n");
 	xmlNodePtr child;
 
-#ifdef COMPRESS
+	#ifdef COMPRESS
 	/* base64decode */
 	size_t cLen;
 	/*size_t tLen;
@@ -363,6 +363,78 @@ ts_bool parseXMLPointData(ts_vesicle *vesicle,xmlDocPtr doc, xmlNodePtr cur){
 				}
 				xmlFree(values);		
 			}
+
+			if(!xmlStrcmp(property_name,(const xmlChar *)"concentration")){
+				values=xmlNodeListGetString(doc,child->xmlChildrenNode,1);
+				vals=(char *)values;
+				token=strtok(vals," ");
+				idx=0;
+				while(token!=NULL){
+					if(idx<vesicle->vlist->n){
+						vesicle->vlist->vtx[idx]->cx=atof(token);
+					} else if(vesicle->tape->nmono && vesicle->tape->npoly && idx<vesicle->vlist->n+vesicle->tape->nmono*vesicle->tape->npoly) {
+						polyidx=(idx-vesicle->vlist->n)/vesicle->tape->nmono;
+						monoidx=(idx-vesicle->vlist->n)%vesicle->tape->nmono;
+						vesicle->poly_list->poly[polyidx]->vlist->vtx[monoidx]->cx=atof(token);
+					} else {
+						filidx=(idx-vesicle->vlist->n-vesicle->tape->nmono*vesicle->tape->npoly)/vesicle->tape->nfono;
+						fonoidx=(idx-vesicle->vlist->n-vesicle->tape->nmono*vesicle->tape->npoly)%vesicle->tape->nfono;
+						//fprintf(stderr,"filidx=%d, fonoidx=%d, coord=%s,%s,%s\n",filidx,fonoidx,token[0],token[1],token[2]);
+						vesicle->filament_list->poly[filidx]->vlist->vtx[fonoidx]->cx=atof(token);
+					}
+					idx++;
+					token=strtok(NULL," ");
+				}
+				xmlFree(values);		
+			}
+			if(!xmlStrcmp(property_name,(const xmlChar *)"projection")){
+				values=xmlNodeListGetString(doc,child->xmlChildrenNode,1);
+				vals=(char *)values;
+				token=strtok(vals," ");
+				idx=0;
+				while(token!=NULL){
+					if(idx<vesicle->vlist->n){
+						vesicle->vlist->vtx[idx]->proj=atof(token);
+					} else if(vesicle->tape->nmono && vesicle->tape->npoly && idx<vesicle->vlist->n+vesicle->tape->nmono*vesicle->tape->npoly) {
+						polyidx=(idx-vesicle->vlist->n)/vesicle->tape->nmono;
+						monoidx=(idx-vesicle->vlist->n)%vesicle->tape->nmono;
+						vesicle->poly_list->poly[polyidx]->vlist->vtx[monoidx]->proj=atof(token);
+					} else {
+						filidx=(idx-vesicle->vlist->n-vesicle->tape->nmono*vesicle->tape->npoly)/vesicle->tape->nfono;
+						fonoidx=(idx-vesicle->vlist->n-vesicle->tape->nmono*vesicle->tape->npoly)%vesicle->tape->nfono;
+						//fprintf(stderr,"filidx=%d, fonoidx=%d, coord=%s,%s,%s\n",filidx,fonoidx,token[0],token[1],token[2]);
+						vesicle->filament_list->poly[filidx]->vlist->vtx[fonoidx]->proj=atof(token);
+					}
+					idx++;
+					token=strtok(NULL," ");
+				}
+				xmlFree(values);		
+			}
+			if(!xmlStrcmp(property_name,(const xmlChar *)"normals")){
+				values=xmlNodeListGetString(doc,child->xmlChildrenNode,1);
+				vals=(char *)values;
+				//printf ("%s", vals);
+				token1[0]=strtok(vals," ");
+				token1[1]=strtok(NULL," ");
+				token1[2]=strtok(NULL,"\n");
+				//temp_token=token;
+				
+				idx=0;
+				while(token1[0]!=NULL){
+					if (idx<vesicle->vlist->n){
+						vesicle->vlist->vtx[idx]->Fx=atof(token1[0]);
+						vesicle->vlist->vtx[idx]->Fy=atof(token1[1]);
+						vesicle->vlist->vtx[idx]->Fz=atof(token1[2]);
+						//printf ("token %s %s %s\n",token1[0], token1[1], token1[2]);
+					}
+					token1[0]=strtok(NULL," ");
+					token1[1]=strtok(NULL," ");
+					token1[2]=strtok(NULL,"\n");
+					idx++;
+				}
+				xmlFree(values);		
+			}
+
 			if(!xmlStrcmp(property_name,(const xmlChar *)"active force")){
 				values=xmlNodeListGetString(doc,child->xmlChildrenNode,1);
 				vals=(char *)values;
@@ -371,21 +443,50 @@ ts_bool parseXMLPointData(ts_vesicle *vesicle,xmlDocPtr doc, xmlNodePtr cur){
 				token1[1]=strtok(NULL," ");
 				token1[2]=strtok(NULL,"\n");
 				//temp_token=token;
-
+				
 				idx=0;
 				while(token1[0]!=NULL){
 					if (idx<vesicle->vlist->n){
 						vesicle->vlist->vtx[idx]->Factx=atof(token1[0]);
 						vesicle->vlist->vtx[idx]->Facty=atof(token1[1]);
 						vesicle->vlist->vtx[idx]->Factz=atof(token1[2]);
+
+						vesicle->vlist->vtx[idx]->F_vtx=sqrt(pow(vesicle->vlist->vtx[idx]->Factx,2)+pow(vesicle->vlist->vtx[idx]->Facty,2)+pow(vesicle->vlist->vtx[idx]->Factz,2));
 						//printf ("token %s %s %s\n",token1[0], token1[1], token1[2]);
+						
+						
 					}
 					token1[0]=strtok(NULL," ");
 					token1[1]=strtok(NULL," ");
 					token1[2]=strtok(NULL,"\n");
 					idx++;
 				}
-				xmlFree(values);
+				xmlFree(values);		
+			}
+			if(!xmlStrcmp(property_name,(const xmlChar *)"blow_force")){
+				values=xmlNodeListGetString(doc,child->xmlChildrenNode,1);
+				vals=(char *)values;
+				//printf ("%s", vals);
+				token1[0]=strtok(vals," ");
+				token1[1]=strtok(NULL," ");
+				token1[2]=strtok(NULL,"\n");
+				//temp_token=token;
+				
+				idx=0;
+				while(token1[0]!=NULL){
+					if (idx<vesicle->vlist->n){
+						vesicle->vlist->vtx[idx]->Fbx=atof(token1[0]);
+						vesicle->vlist->vtx[idx]->Fby=atof(token1[1]);
+						vesicle->vlist->vtx[idx]->Fbz=atof(token1[2]);
+						//printf ("token %s %s %s\n",token1[0], token1[1], token1[2]);
+					}
+		
+					token1[0]=strtok(NULL," ");
+					token1[1]=strtok(NULL," ");
+					token1[2]=strtok(NULL,"\n");
+					idx++;
+				}
+				xmlFree(values);		
 			}
 			if(!xmlStrcmp(property_name,(const xmlChar *)"shear force")){
 				values=xmlNodeListGetString(doc,child->xmlChildrenNode,1);
